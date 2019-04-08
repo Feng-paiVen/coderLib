@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>五子棋</title>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			body{
+				width: 800px;
+				height: 800px;
+				margin:0 auto;
+			}
+			#c{
+				background-image: url(img/bg.jpg);
+				-webkit-background-size: 100% 100%;
+				background-size: 100% 100%;
+				width: 800px;
+				height: 800px;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="c" width="800" height="800"></canvas>
+	</body>
+	<script type="text/javascript">
+		//准备二维数组存放五子棋
+		var maps=new Array(20);
+		for(var i=0,len=maps.length;i<len;i++){
+			maps[i]=new Array(20);
+			for(var j=0,subLen=maps[i].length;j<subLen;j++){
+				maps[i][j]=0;
+			}
+		}
+		var can=document.getElementById("c");
+		var ctx=can.getContext("2d");
+		for(var i=0;i<20;i++){
+			for(var j=0;j<20;j++){
+				ctx.strokeStyle="white";
+				ctx.strokeRect(40*i,40*j,40,40);
+			}
+		}
+		
+//		var black=new Image();
+//		black.src="img/black.png";
+//		var white=new Image();
+//		white.src="img/white.png";
+		//切换色棋
+		var isBlack=true;
+		can.onclick=function(e){
+			var scrollTop=document.documentElement.scrollTop||document.body.scrollTop;
+			var ev=e||event;
+			var col=parseInt((ev.clientX-can.offsetLeft-20)/40)+1;
+			var row=parseInt((ev.clientY-can.offsetTop-20+scrollTop)/40)+1;
+			//边缘控制
+			if(col==20||row==20){
+				alert("不能在该区域下棋");
+				return;
+			}
+			//设置棋子阴影
+			ctx.shadowColor="dimgray";
+			ctx.shadowBlur=15;
+			ctx.shadowOffsetX=0;
+			ctx.shadowOffsetY=0;
+			//设置棋子渐变
+			var graW=ctx.createRadialGradient(col*40-8,row*40-8,3,col*40,row*40,25);
+			graW.addColorStop(0,"whitesmoke");
+			graW.addColorStop(1,"gray");
+			var graB=ctx.createRadialGradient(col*40-8,row*40-8,0,col*40,row*40,25);
+			graB.addColorStop(0,"lightgray");
+			graB.addColorStop(1,"#444444");
+			if(isBlack){
+				//判断当前棋位是否有棋子
+				if(!maps[row][col]){
+					maps[row][col]=1;
+					isWin(1,col,row);
+				}else{
+					alert("不允许覆盖");
+					return;
+				}
+				ctx.beginPath();
+				ctx.fillStyle=graW;
+				ctx.arc(col*40,row*40,20,0,2*Math.PI);
+				ctx.fill();
+				//ctx.drawImage(white,col*40-20,row*40-20);
+			}else{
+				if(!maps[row][col]){
+					maps[row][col]=2;
+					isWin(2,col,row);
+				}else{
+					alert("不允许覆盖");
+					return;
+				}
+				ctx.beginPath();
+				ctx.fillStyle=graB;
+				ctx.arc(col*40,row*40,20,0,2*Math.PI);
+				ctx.fill()
+				//ctx.drawImage(black,col*40-20,row*40-20);
+			}
+			isBlack=!isBlack;
+		}
+		function isWin(t,col,row){
+			//水平
+			var orgCol=col;
+			var orgRow=row;
+			var total=1;
+			while(col-1>0&&maps[row][col-1]==t){
+				total++;
+				col--;
+			}
+			row=orgRow;
+			col=orgCol;
+			while(col+1<20&&maps[row][col+1]==t){
+				total++;
+				col++;
+			}
+			if(total>=5){
+				if(t==1){
+					alert("白子赢了");
+				}else{
+					alert("黑子赢了");
+				}
+			}
+			//垂直
+			col=orgCol;
+			row=orgRow;
+			total=1;
+			while(row-1>0&&maps[row-1][col]==t){
+				total++;
+				row--;
+			}
+			row=orgRow;
+			col=orgCol;
+			while(row+1<maps.length&&maps[row+1][col]==t){
+				total++;
+				row++;
+			}
+			if(total>=5){
+				if(t==1){
+					alert("白子赢了");
+				}else{
+					alert("黑子赢了");
+				}
+			}
+			//上左到下右
+			col=orgCol;
+			row=orgRow;
+			total=1;
+			while(row-1>0&&col-1>0&&maps[row-1][col-1]==t){
+				total++;
+				row--;
+				col--;
+			}
+			row=orgRow;
+			col=orgCol;
+			while(row+1<maps.length&&col+1<maps.length&&maps[row+1][col+1]==t){
+				total++;
+				row++;
+				col++;
+			}
+			if(total>=5){
+				if(t==1){
+					alert("白子赢了");
+				}else{
+					alert("黑子赢了");
+				}
+			}
+			//下左到右上
+			col=orgCol;
+			row=orgRow;
+			total=1;
+			while(row+1>0&&col-1>0&&maps[row+1][col-1]==t){
+				total++;
+				row++;
+				col--;
+			}
+			row=orgRow;
+			col=orgCol;
+			while(row-1<maps.length&&col+1<maps.length&&maps[row-1][col+1]==t){
+				total++;
+				row--;
+				col++;
+			}
+			if(total>=5){
+				if(t==1){
+					alert("白子赢了");
+				}else{
+					alert("黑子赢了");
+				}
+			}
+		}
+	</script>
+</html>
