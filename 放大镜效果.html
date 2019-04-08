@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>放大镜</title>
+		<style type="text/css">
+			*{
+				margin:0;
+				padding: 0;
+			}
+			#box>img{
+				width: 100%;
+				height: 100%;
+			}
+			#box{
+				width: 400px;
+				height: 320px;
+				position: relative;
+				float: left;
+			}
+			#box>div{
+				width: 100px;
+				height: 100px;
+				background-color: blue;
+				opacity: .3;
+				display: none;
+				position: absolute;
+			}
+			#scale{
+				width: 400px;
+				height: 320px;
+				border: 1px solid red;
+				float: left;
+				position: relative;
+				overflow: hidden;
+				display: none;
+			}
+			#scale>img{
+				width: 800px;
+				height: 620px;
+				position: absolute;
+			}
+		</style>
+	</head>
+	<body style="height: 2000px;">
+		<div id="box">
+			<img src="../img/3.jpg" alt="" />
+			<div></div>
+		</div>
+		<div id="scale"><img src="../img/3.jpg" id="scaleImg"/></div>
+	</body>
+	<script src="../js/moves.js"></script>
+	<script type="text/javascript">
+		var oBox=document.getElementById("box");
+		var oImg=oBox.getElementsByTagName("img")[0];
+		var subBox=oBox.getElementsByTagName("div")[0];
+		var scale=document.getElementById("scale");
+		var scaleImg=document.getElementById("scaleImg");
+		oBox.onmousemove=function(e){
+			var scrollTop=document.documentElement.scrollTop||document.body.scrollTop;
+			var oEvent=e||event;
+			subBox.style.display="block";
+			scale.style.display="block";
+			var subX=oEvent.clientX-oBox.offsetLeft-subBox.offsetWidth/2;
+			var subY=oEvent.clientY-oBox.offsetTop+scrollTop-subBox.offsetHeight/2;
+			if(subX<0){subX=0;}
+			if(subX>oBox.offsetWidth-subBox.offsetWidth){subX=oBox.offsetWidth-subBox.offsetWidth}
+			if(subY<0){subY=0;}
+			if(subY>oBox.offsetHeight-subBox.offsetHeight){subY=oBox.offsetHeight-subBox.offsetHeight}
+			subBox.style.left=subX+"px";
+			subBox.style.top=subY+"px";
+			var percentX=subX/(oBox.offsetWidth-subBox.offsetWidth);
+			var percentY=subY/(oBox.offsetHeight-subBox.offsetHeight);
+			scaleImg.style.left=-percentX*(scaleImg.offsetWidth-scale.offsetWidth)+"px";
+			scaleImg.style.top=-percentY*(scaleImg.offsetHeight-scale.offsetHeight)+"px";
+		}
+		oBox.onmouseout=function(){
+			subBox.style.display="none";
+			scale.style.display="none";
+		}
+	</script>
+</html>
